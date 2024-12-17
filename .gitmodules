@@ -1,0 +1,4 @@
+[submodule "upstream/github.com/VoronDesign/Voron-Trident"]
+	path = upstream/github.com/VoronDesign/Voron-Trident
+	url = https://github.com/VoronDesign/Voron-Trident
+	branch = main

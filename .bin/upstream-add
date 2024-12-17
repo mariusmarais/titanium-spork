@@ -1,0 +1,105 @@
+#!/bin/bash -e
+
+# Quickly add a new upstream reference to the repo
+
+if [ $# -lt 1 ]; then
+  echo "Usage: $(basename "$0") [git|printables|thingiverse] GIT_URL|ZIP_LOCATION"
+  exit 1
+fi
+
+folder="$(realpath --relative-to . "$(git rev-parse --show-toplevel)/upstream")"
+upstream=""
+name=""
+
+if [ $# -eq 1 ]; then
+  # auto-detect upstream
+
+  if [[ "$1" =~ ^https://github.com/ ]]; then
+    upstream="git"
+    zip="$1"
+    name="$(echo "$zip" | sed -e 's/^.*:\/\///' -e 's/\.git$//')"
+  fi
+
+  if [ -e "$1" ]; then
+    zip="$1"
+
+    tmpdir="$(mktemp -d)"
+    trap '{ set +x; } 2>/dev/null; [ -e "$tmpdir" ] && rm -rf "$tmpdir"' EXIT
+
+    unzip -qo "$1" -d "$tmpdir"
+
+    # thingiverse?
+    if [ -z "$upstream" ] && 
+      [ -e "$tmpdir/LICENSE.txt" ] &&
+      [ -e "$tmpdir/README.txt" ] &&
+      [ -d "$tmpdir/files" ] && 
+      [ $(grep -Pce 'on Thingiverse: https://www.thingiverse.com/thing:\d+$' "$tmpdir/README.txt") -eq 1 ]
+      then
+        upstream="thingiverse"
+        name="$(cat "$tmpdir/README.txt" | sed -E 's/^(.*) by [^\s]+ on Thingiverse:.*$/\1/')"
+    fi
+
+
+    # printables?
+    if [ -z "$upstream" ] && 
+      [ $(echo "$zip" | grep -ce '-model_files.zip$') -eq 1 ] && 
+      [ $(ls -1 "$tmpdir" | grep -Pc -e "^\d+-.+-[0-9a-f-]{36}\.pdf$") -eq 1 ]
+      then
+        upstream="printables"
+        name="$(ls -1 "$tmpdir"/*.pdf | sed -E 's/^.*\/[0-9]+-(.*)-[0-9a-f-]{36}\.pdf$/\1/')"
+    fi
+
+
+    rm -rf "$tmpdir"
+
+    if [ -z "$upstream" ]; then
+      upstream="other"
+    fi
+  fi
+else 
+  upstream="$1"
+  zip="$2"
+fi
+
+case "$upstream" in
+  git)
+    folder="$folder/${name:-$(echo "$zip" | sed -e 's/^.*:\/\///' -e 's/\.git$//')}"
+    ;;
+  
+  printables)
+    folder="$folder/printables.com/${name:-$(basename "$zip" '-model_files.zip')}"
+    ;;
+  
+  thingiverse)
+    folder="$folder/thingiverse.com/${name:-$(basename "$zip" | sed -E 's/ - [0-9]+\.zip$//')}"
+    ;;
+
+  other)
+    folder="$folder/other/$(basename "$zip" .zip)"
+    ;;
+
+  *)
+    echo "Unknown upstream: '$1'"
+    exit 1
+esac
+
+case "$upstream" in
+  git)
+    mkdir -p "$(dirname "$folder")"
+    main_branch="$(git remote show "$zip" | grep -Poe 'HEAD branch: \K\w+')"
+    git submodule add -b "$main_branch" "$zip" "$folder"
+
+
+    ;;
+
+  *)
+    if [ ! -e "$zip" ]; then
+      echo "Zip file not found: '$zip'"
+      exit 1
+    fi
+    mkdir -p "$folder"
+    unzip -qo "$zip" -d "$folder"
+    ;;
+
+esac
+echo Added to $folder
