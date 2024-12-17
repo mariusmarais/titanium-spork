@@ -2,3 +2,35 @@
 	path = upstream/github.com/VoronDesign/Voron-Trident
 	url = https://github.com/VoronDesign/Voron-Trident
 	branch = main
+[submodule "upstream/github.com/VoronDesign/Voron-Stealthburner"]
+	path = upstream/github.com/VoronDesign/Voron-Stealthburner
+	url = https://github.com/VoronDesign/Voron-Stealthburner
+	branch = main
+[submodule "upstream/github.com/bigtreetech/BIGTREETECH-OCTOPUS-Pro"]
+	path = upstream/github.com/bigtreetech/BIGTREETECH-OCTOPUS-Pro
+	url = https://github.com/bigtreetech/BIGTREETECH-OCTOPUS-Pro
+	branch = master
+[submodule "upstream/github.com/bigtreetech/EBB"]
+	path = upstream/github.com/bigtreetech/EBB
+	url = https://github.com/bigtreetech/EBB
+	branch = master
+[submodule "upstream/github.com/bigtreetech/Eddy"]
+	path = upstream/github.com/bigtreetech/Eddy
+	url = https://github.com/bigtreetech/Eddy
+	branch = master
+[submodule "upstream/github.com/Chaoticlab/CNC-Tap-for-Voron"]
+	path = upstream/github.com/Chaoticlab/CNC-Tap-for-Voron
+	url = https://github.com/Chaoticlab/CNC-Tap-for-Voron
+	branch = master
+[submodule "upstream/github.com/Phaetus/Rapido-2F"]
+	path = upstream/github.com/Phaetus/Rapido-2F
+	url = https://github.com/Phaetus/Rapido-2F
+	branch = main
+[submodule "upstream/github.com/VoronDesign/Voron-Tap"]
+	path = upstream/github.com/VoronDesign/Voron-Tap
+	url = https://github.com/VoronDesign/Voron-Tap
+	branch = main
+[submodule "upstream/github.com/bigtreetech/BIGTREETECH-Stepper-Motor-Driver"]
+	path = upstream/github.com/bigtreetech/BIGTREETECH-Stepper-Motor-Driver
+	url = https://github.com/bigtreetech/BIGTREETECH-Stepper-Motor-Driver
+	branch = master
